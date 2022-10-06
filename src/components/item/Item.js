@@ -1,6 +1,10 @@
 import React from "react";
 
 const Item = ({ item }) => {
+    const done = () => {
+        console.log("done");
+    };
+
     return (
         <li className={`${item.completed ? `completed` : ""}`}>
             <div className='view'>
@@ -8,11 +12,12 @@ const Item = ({ item }) => {
                     className='toggle'
                     type='checkbox'
                     checked={item.completed}
+                    onChange={done}
                 />
                 <label>{item.name}</label>
                 <button className='destroy'></button>
             </div>
-            <input className='edit' value='Create a Todo template' />
+            <input className='edit' />
         </li>
     );
 };

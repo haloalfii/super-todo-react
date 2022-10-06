@@ -7,7 +7,7 @@ const Header = () => {
             <input
                 className='new-todo'
                 placeholder='What needs to be done?'
-                autofocus
+                autoFocus
             />
         </header>
     );
