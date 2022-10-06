@@ -1,21 +1,27 @@
 import React from "react";
+import { useState } from "react";
 
-const Item = ({ item }) => {
-    const done = () => {
-        console.log("done");
+const Item = ({ item, completeTask, deleteTask }) => {
+    const [complete, setComplete] = useState(item.completed);
+
+    const done = (id) => {
+        completeTask(id, !complete);
+        setComplete(!complete);
     };
 
     return (
-        <li className={`${item.completed ? `completed` : ""}`}>
+        <li className={`${complete ? `completed` : ""}`}>
             <div className='view'>
                 <input
                     className='toggle'
                     type='checkbox'
-                    checked={item.completed}
-                    onChange={done}
+                    checked={complete}
+                    onChange={() => done(item.id, complete)}
                 />
                 <label>{item.name}</label>
-                <button className='destroy'></button>
+                <button
+                    className='destroy'
+                    onClick={() => deleteTask(item.id)}></button>
             </div>
             <input className='edit' />
         </li>

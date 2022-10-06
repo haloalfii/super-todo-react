@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Header = () => {
+const Header = ({ addTask }) => {
+    const [text, setText] = useState("");
+    const submitEvent = (e) => {
+        e.preventDefault();
+        addTask(text);
+
+        setText("");
+        // console.log("Enter", text);
+    };
+
     return (
         <header className='header'>
             <h1>Super2Do</h1>
-            <input
-                className='new-todo'
-                placeholder='What needs to be done?'
-                autoFocus
-            />
+            <form action='' onSubmit={submitEvent}>
+                <input
+                    className='new-todo'
+                    placeholder='What needs to be done?'
+                    autoFocus
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                />
+            </form>
         </header>
     );
 };

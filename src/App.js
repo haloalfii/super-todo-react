@@ -6,32 +6,61 @@ import "./style/base.css";
 import "./style/index.css";
 
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
     const [items, setItems] = useState([]);
     const [isPending, setIsPending] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchData = () => {
-        fetch("http://127.0.0.1:8000/api/item")
-            .then((res) => {
-                if (!res.ok) {
-                    // error coming back from server
-                    throw Error("could not fetch the data for that resource");
-                }
-                return res.json();
-            })
-            .then((data) => {
-                setIsPending(false);
-                setItems(data);
-                // console.log("Ini Data", data);
-                setError(null);
-            })
-            .catch((err) => {
-                // auto catches network / connection error
-                setIsPending(false);
-                setError(err.message);
-            });
+    const fetchData = async () => {
+        const res = await axios.get("http://127.0.0.1:8000/api/item");
+        const data = res.data;
+        setItems(data);
+    };
+
+    const fetchDataActive = async () => {
+        const res = await axios.get("http://127.0.0.1:8000/api/item/active");
+        const data = res.data;
+        setItems(data);
+    };
+
+    const fetchDataCompleted = async () => {
+        const res = await axios.get("http://127.0.0.1:8000/api/item/completed");
+        const data = res.data;
+        setItems(data);
+    };
+
+    const addTask = async (task) => {
+        const item = {
+            name: task,
+        };
+        await axios.post("http://127.0.0.1:8000/api/item/store", {
+            item,
+        });
+        fetchData();
+    };
+
+    const completeTask = async (id, complete) => {
+        await axios.put("http://127.0.0.1:8000/api/item/" + id, {
+            completed: complete,
+        });
+    };
+
+    const deleteTask = async (id) => {
+        await axios.delete("http://127.0.0.1:8000/api/item/" + id);
+        fetchData();
+    };
+
+    const changeLook = async (text) => {
+        // console.log("Ini Change Look", text);
+        if (text == "all") {
+            fetchData();
+        } else if (text == "active") {
+            fetchDataActive();
+        } else {
+            fetchDataCompleted();
+        }
     };
 
     useEffect(() => {
@@ -42,9 +71,17 @@ function App() {
 
     return (
         <section className='todoapp'>
-            <Header />
-            <Main items={items} />
-            <Footer />
+            <Header addTask={addTask} />
+            <Main
+                items={items}
+                completeTask={completeTask}
+                deleteTask={deleteTask}
+            />
+            <Footer
+                length={items.length}
+                clearComplete={fetchData}
+                changeLook={changeLook}
+            />
         </section>
     );
 }
